@@ -26,6 +26,9 @@ const passport = require("passport");
 const passportLocal = require("passport-local");
 const cors = require("cors");
 
+const SERVER_URL = "https://condomanagement.onrender.com";
+const id = -1;
+
 //connect to MongoDb
 const dbURI = `mongodb+srv://${process.env.DB_HOST}:${process.env.DB_PASS}@cluster0.wnii8.mongodb.net/CondoManagementApp?retryWrites=true&w=majority`;
 mongoose
@@ -37,6 +40,10 @@ mongoose
     app.listen(process.env.PORT || PORT, () => {
       console.log(`Server running on port ${PORT}`);
     });
+    id = setInterval(async () => {
+      console.log("Pinging Server");
+      await WakeServer();
+    }, 840000);
   })
   .catch((err) => {
     console.log(err);
@@ -135,3 +142,13 @@ app.post("/contact-us", isAuth, (req, res) => {
 app.use((req, res) => {
   res.status(404).send("<h1>404 - Page not found</h1>");
 });
+
+async function WakeServer() {
+  try {
+    await axios.get(SERVER_URL);
+    console.log(`${moment().format("MMMM Do YYYY, h:mm:ss a")} - Server successfully pinged`);
+  } catch (e) {
+    clearInterval(id);
+    console.log(`${moment().format("MMMM Do YYYY, h:mm:ss a")} - ${e}`);
+  }
+}
