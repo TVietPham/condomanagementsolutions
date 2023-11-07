@@ -1,6 +1,8 @@
 require("dotenv").config();
 
 //Routes
+const moment = require("moment");
+const axios = require("axios");
 const apartmentRoutes = require("./Server/Routes/apartmentRoutes");
 const announcementRoutes = require("./Server/Routes/announcementRoutes");
 const amenityBookingRoutes = require("./Server/Routes/amenitybookingRoutes");
@@ -27,7 +29,7 @@ const passportLocal = require("passport-local");
 const cors = require("cors");
 
 const SERVER_URL = "https://condomanagement.onrender.com";
-const id = -1;
+let id = -1;
 
 //connect to MongoDb
 const dbURI = `mongodb+srv://${process.env.DB_HOST}:${process.env.DB_PASS}@cluster0.wnii8.mongodb.net/CondoManagementApp?retryWrites=true&w=majority`;
@@ -41,12 +43,16 @@ mongoose
       console.log(`Server running on port ${PORT}`);
     });
     id = setInterval(async () => {
-      console.log("Pinging Server");
-      await WakeServer();
+      try {
+        console.log("Pinging Server");
+        await WakeServer();
+      } catch (e) {
+        console.log();
+      }
     }, 840000);
   })
   .catch((err) => {
-    console.log(err);
+    console.log(`${moment().format("MMMM Do YYYY, h:mm:ss a")} - ${e}`);
   });
 //check
 //use static contents in Client folder
